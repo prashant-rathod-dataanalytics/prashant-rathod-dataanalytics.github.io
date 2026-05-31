@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Prashant Rathod — Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#050812;--bg2:#080e1f;--surface:#0d1428;--surface2:#111c35;--border:#1a2540;--border2:#233060;--accent:#4f6ef7;--accent2:#8b5cf6;--accent3:#06d6a0;--accent4:#f72585;--text:#e8edf8;--text2:#8a9bc4;--text3:#4a5a80;--glow:rgba(79,110,247,0.18);--glow2:rgba(139,92,246,0.14);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:"Inter",sans-serif;overflow-x:hidden;line-height:1.6;}
+#scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent4));z-index:9999;transition:width .05s linear;box-shadow:0 0 12px var(--accent);}
+#canvas-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55;}
+nav{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:1000;width:calc(100% - 40px);max-width:1100px;background:rgba(8,14,31,.72);backdrop-filter:blur(20px) saturate(180%);border:1px solid var(--border2);border-radius:16px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;box-shadow:0 4px 32px rgba(0,0,0,.4),0 0 0 1px rgba(79,110,247,.08);}
+.nav-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-.02em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:6px;list-style:none;}
+.nav-links a{font-size:.78rem;font-weight:500;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .2s;letter-spacing:.04em;text-transform:uppercase;}
+.nav-links a:hover{color:var(--text);background:rgba(79,110,247,.12);}
+.nav-cta{font-family:"Space Mono",monospace;font-size:.72rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:7px 18px;border-radius:8px;text-decoration:none;font-weight:700;letter-spacing:.02em;transition:all .2s;box-shadow:0 0 20px rgba(79,110,247,.3);}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(79,110,247,.45);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all .3s;}
+.mobile-menu{display:none;position:fixed;top:78px;left:20px;right:20px;background:rgba(8,14,31,.96);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:16px;padding:20px;z-index:999;flex-direction:column;gap:8px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{color:var(--text2);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;}
+.mobile-menu a:hover{background:rgba(79,110,247,.12);color:var(--text);}
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;z-index:1;padding:100px 20px 60px;}
+.hero-inner{max-width:900px;width:100%;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.3);border-radius:100px;padding:6px 16px;margin-bottom:28px;font-size:.72rem;font-family:"Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+.hero-badge::before{content:"";width:6px;height:6px;background:var(--accent3);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+h1{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(2.8rem,7vw,5.2rem);line-height:1.0;letter-spacing:-.03em;margin-bottom:16px;}
+.h1-name{display:block;background:linear-gradient(135deg,#fff 0%,var(--text) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h1-role{display:block;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-height:1.1em;}
+.typing-cursor{display:inline-block;width:3px;height:.85em;background:var(--accent2);margin-left:2px;animation:blink .75s step-end infinite;vertical-align:text-bottom;}
+@keyframes blink{50%{opacity:0;}}
+.hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:40px 0 36px;}
+.metric-card{background:rgba(13,20,40,.8);border:1px solid var(--border2);border-radius:16px;padding:20px 16px;transition:all .3s;position:relative;overflow:hidden;}
+.metric-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,110,247,.06),rgba(139,92,246,.06));opacity:0;transition:opacity .3s;}
+.metric-card:hover::before{opacity:1;}
+.metric-card:hover{transform:translateY(-4px);border-color:rgba(79,110,247,.4);box-shadow:0 12px 40px rgba(79,110,247,.15);}
+.metric-val{font-family:"Syne",sans-serif;font-weight:800;font-size:1.6rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;line-height:1.2;}
+.metric-label{font-size:.72rem;color:var(--text2);letter-spacing:.04em;margin-top:4px;display:block;}
+.hero-desc{font-size:1rem;color:var(--text2);max-width:620px;margin:0 auto 36px;line-height:1.7;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{font-family:"Space Mono",monospace;font-size:.78rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:12px 28px;border-radius:10px;text-decoration:none;letter-spacing:.04em;transition:all .25s;box-shadow:0 0 24px rgba(79,110,247,.35);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,110,247,.5);}
+.btn-outline{font-family:"Space Mono",monospace;font-size:.78rem;font-weight:700;background:transparent;color:var(--text);padding:12px 28px;border-radius:10px;text-decoration:none;letter-spacing:.04em;transition:all .25s;border:1px solid var(--border2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.hero-social{display:flex;gap:14px;justify-content:center;margin-top:28px;}
+.social-link{display:flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;font-size:.8rem;padding:8px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;font-family:"Space Mono",monospace;}
+.social-link:hover{color:var(--accent);border-color:var(--accent);background:rgba(79,110,247,.08);}
+.social-link svg{width:15px;height:15px;fill:currentColor;}
+section{position:relative;z-index:1;}
+.section-inner{max-width:1100px;margin:0 auto;padding:90px 24px;}
+.section-tag{font-family:"Space Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.section-tag::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(79,110,247,.3),transparent);}
+.section-title{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.025em;line-height:1.15;margin-bottom:14px;}
+.section-sub{color:var(--text2);font-size:.95rem;max-width:560px;line-height:1.7;margin-bottom:50px;}
+#achievement{background:linear-gradient(135deg,rgba(6,214,160,.06),rgba(79,110,247,.08),rgba(247,37,133,.06));border-top:1px solid rgba(79,110,247,.12);border-bottom:1px solid rgba(79,110,247,.12);}
+.achievement-banner{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;max-width:1100px;margin:0 auto;padding:50px 24px;}
+.achievement-text .label{font-family:"Space Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;}
+.achievement-text h2{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;margin-bottom:8px;}
+.achievement-text p{color:var(--text2);font-size:.9rem;line-height:1.65;max-width:540px;}
+.achievement-stat-block{text-align:right;flex-shrink:0;}
+.big-stat{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(2.4rem,5vw,3.6rem);background:linear-gradient(135deg,var(--accent3),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.big-stat-sub{font-size:.78rem;color:var(--text2);font-family:"Space Mono",monospace;margin-top:6px;}
+.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;}
+.skill-group{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;}
+.skill-group-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent2);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.skill-item{margin-bottom:16px;}.skill-item:last-child{margin-bottom:0;}
+.skill-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.skill-name{font-size:.82rem;color:var(--text);font-weight:500;}
+.skill-pct{font-family:"Space Mono",monospace;font-size:.72rem;color:var(--text3);}
+.skill-bar{height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:4px;width:0%;transition:width 1.4s cubic-bezier(.22,1,.36,1);background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.skill-fill.green{background:linear-gradient(90deg,var(--accent3),var(--accent));}
+.skill-fill.purple{background:linear-gradient(90deg,var(--accent2),var(--accent4));}
+.skill-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.skill-tag{font-size:.7rem;font-family:"Space Mono",monospace;padding:4px 10px;border-radius:6px;background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.2);color:var(--text2);white-space:nowrap;}
+.projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;}
+.project-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--glow),var(--glow2));opacity:0;transition:opacity .35s;}
+.project-card:hover::before{opacity:1;}
+.project-card:hover{transform:translateY(-6px);border-color:rgba(79,110,247,.45);box-shadow:0 20px 50px rgba(79,110,247,.15);}
+.project-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;}
+.project-num{font-family:"Space Mono",monospace;font-size:.7rem;color:var(--text3);letter-spacing:.1em;}
+.project-impact{font-family:"Space Mono",monospace;font-size:.72rem;padding:4px 10px;border-radius:6px;font-weight:700;white-space:nowrap;}
+.impact-green{background:rgba(6,214,160,.12);color:var(--accent3);border:1px solid rgba(6,214,160,.25);}
+.impact-blue{background:rgba(79,110,247,.12);color:var(--accent);border:1px solid rgba(79,110,247,.25);}
+.impact-purple{background:rgba(139,92,246,.12);color:var(--accent2);border:1px solid rgba(139,92,246,.25);}
+.impact-red{background:rgba(247,37,133,.12);color:var(--accent4);border:1px solid rgba(247,37,133,.25);}
+.project-title{font-family:"Syne",sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:-.01em;margin-bottom:6px;line-height:1.3;}
+.project-client{font-size:.75rem;font-family:"Space Mono",monospace;color:var(--text3);margin-bottom:14px;}
+.project-desc{font-size:.83rem;color:var(--text2);line-height:1.65;margin-bottom:18px;}
+.project-stat{font-size:.8rem;color:var(--text);background:rgba(255,255,255,.04);border-radius:8px;padding:8px 12px;margin-bottom:14px;border-left:3px solid var(--accent);}
+.project-tech{display:flex;flex-wrap:wrap;gap:6px;}
+.tech-badge{font-size:.67rem;font-family:"Space Mono",monospace;padding:3px 9px;border-radius:5px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text3);}
+.timeline{position:relative;padding-left:28px;}
+.timeline::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,var(--accent),var(--accent2),transparent);}
+.timeline-item{position:relative;margin-bottom:40px;}
+.timeline-item::before{content:"";position:absolute;left:-33px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent),0 0 24px rgba(79,110,247,.3);border:2px solid var(--bg);}
+.timeline-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:4px;flex-wrap:wrap;}
+.timeline-role{font-family:"Syne",sans-serif;font-weight:700;font-size:1rem;letter-spacing:-.01em;}
+.timeline-date{font-family:"Space Mono",monospace;font-size:.72rem;color:var(--accent);background:rgba(79,110,247,.1);padding:3px 10px;border-radius:6px;white-space:nowrap;}
+.timeline-company{font-size:.82rem;color:var(--text2);margin-bottom:14px;}
+.timeline-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.timeline-bullets li{font-size:.83rem;color:var(--text2);padding-left:16px;position:relative;line-height:1.6;}
+.timeline-bullets li::before{content:">";position:absolute;left:0;color:var(--accent);font-size:.72rem;}
+.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.edu-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;}
+.edu-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.edu-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:1rem;}
+.edu-degree{font-family:"Syne",sans-serif;font-weight:700;font-size:.88rem;margin-bottom:4px;line-height:1.3;}
+.edu-inst{font-size:.78rem;color:var(--text2);margin-bottom:4px;}
+.edu-year{font-family:"Space Mono",monospace;font-size:.7rem;color:var(--accent);}
+#contact{background:linear-gradient(135deg,rgba(79,110,247,.05),rgba(139,92,246,.05));}
+.contact-inner{text-align:center;max-width:600px;margin:0 auto;padding:90px 24px;}
+.contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:32px;}
+.contact-btn{display:flex;align-items:center;gap:9px;padding:13px 24px;border-radius:12px;text-decoration:none;font-family:"Space Mono",monospace;font-size:.78rem;font-weight:700;letter-spacing:.04em;transition:all .25s;}
+.contact-btn.github{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text);}
+.contact-btn.github:hover{background:rgba(255,255,255,.1);transform:translateY(-2px);}
+.contact-btn.linkedin{background:rgba(0,119,181,.15);border:1px solid rgba(0,119,181,.3);color:#5eadd6;}
+.contact-btn.linkedin:hover{background:rgba(0,119,181,.25);transform:translateY(-2px);}
+.contact-btn.email{background:linear-gradient(135deg,rgba(79,110,247,.15),rgba(139,92,246,.15));border:1px solid rgba(79,110,247,.3);color:var(--accent);}
+.contact-btn.email:hover{background:linear-gradient(135deg,rgba(79,110,247,.25),rgba(139,92,246,.25));transform:translateY(-2px);}
+.contact-btn svg{width:16px;height:16px;fill:currentColor;flex-shrink:0;}
+footer{text-align:center;padding:28px 24px;border-top:1px solid var(--border);font-family:"Space Mono",monospace;font-size:.7rem;color:var(--text3);z-index:1;position:relative;}
+.fade-up{opacity:0;transform:translateY(36px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+.fade-up.delay-1{transition-delay:.1s;}.fade-up.delay-2{transition-delay:.2s;}.fade-up.delay-3{transition-delay:.3s;}.fade-up.delay-4{transition-delay:.4s;}
+@media(max-width:768px){.nav-links,.nav-cta{display:none;}.hamburger{display:flex;}.hero-metrics{grid-template-columns:1fr 1fr;gap:12px;}.hero-metrics .metric-card:last-child{grid-column:span 2;}.skills-grid{grid-template-columns:1fr;}.projects-grid{grid-template-columns:1fr;}.achievement-banner{grid-template-columns:1fr;gap:20px;}.achievement-stat-block{text-align:left;}.edu-grid{grid-template-columns:1fr;}.timeline{padding-left:20px;}.timeline-item::before{left:-25px;}h1{font-size:2.4rem;}}
+@media(max-width:480px){.hero-metrics{grid-template-columns:1fr;}.hero-metrics .metric-card:last-child{grid-column:span 1;}nav{width:calc(100% - 24px);}}
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+<canvas id="canvas-bg"></canvas>
+<nav id="navbar">
+  <span class="nav-logo">PR</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="Prashant_Rathod_Resume_v15.docx" download>Download Resume</a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#skills" onclick="closeMobile()">Skills</a>
+  <a href="#projects" onclick="closeMobile()">Projects</a>
+  <a href="#experience" onclick="closeMobile()">Experience</a>
+  <a href="#education" onclick="closeMobile()">Education</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge fade-up">Available for Data &amp; BI Analyst Roles</div>
+    <h1 class="fade-up delay-1">
+      <span class="h1-name">Prashant Rathod</span>
+      <span class="h1-role" id="typing-role"></span><span class="typing-cursor"></span>
+    </h1>
+    <div class="hero-metrics fade-up delay-2">
+      <div class="metric-card">
+        <span class="metric-val">CAD $402K</span>
+        <span class="metric-label">Annual loss prevented via A/B Testing</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val">1.44% MAPE</span>
+        <span class="metric-label">Retail Forecasting — 8-year dataset</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val">CAD $485K</span>
+        <span class="metric-label">Revenue-at-risk surfaced via DQ analysis</span>
+      </div>
+    </div>
+    <p class="hero-desc fade-up delay-3">Data Analyst building end-to-end analytical solutions — Python and SQL for data engineering, cloud infrastructure on AWS and Snowflake, and Power BI for the business-facing layer. Business question in. Defensible recommendation out.</p>
+    <div class="hero-btns fade-up delay-4">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+    <div class="hero-social fade-up delay-4">
+      <a href="https://github.com/prashant-rathod-dataanalytics" target="_blank" rel="noopener" class="social-link">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.41-1.29.75-1.59-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.004 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://linkedin.com/in/prashant-rathod-data-analyst" target="_blank" rel="noopener" class="social-link">
+        <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 110-4.14 2.07 2.07 0 010 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.27V1.73C24 .77 23.21 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+
+<div id="achievement">
+  <div class="achievement-banner fade-up">
+    <div class="achievement-text">
+      <div class="label">Headline Achievement</div>
+      <h2>290,584-row statistical test suite — hard NO-GO recommendation</h2>
+      <p>Validated by Z-test (p=0.19), Bayesian analysis (P(Treatment&gt;Control)=9.51%), and Cohen&#39;s h=0.0049 (negligible effect size). Prevented a costly website redesign. That is not just analysis — that is the right call, backed by evidence.</p>
+    </div>
+    <div class="achievement-stat-block">
+      <div class="big-stat">CAD<br/>$402K</div>
+      <div class="big-stat-sub">Annual loss prevented</div>
+    </div>
+  </div>
+</div>
+
+<section id="about">
+  <div class="section-inner">
+    <div class="section-tag">About</div>
+    <h2 class="section-title fade-up">Business question in.<br/>Defensible recommendation out.</h2>
+    <p class="section-sub fade-up delay-1">Works across the complete analytics stack with a consistent focus on measurable business outcomes. Every project ships with a BRD, data dictionary, and scope document — not just notebooks. Three years of retail operations at Sport Chek means data quality failures are caught upstream, before they ever reach a system.</p>
+    <div class="skills-grid">
+      <div class="skill-group fade-up delay-1">
+        <div class="skill-group-title">Core Stack</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span><span class="skill-tag">SQL</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">SQL Server</span><span class="skill-tag">DAX</span><span class="skill-tag">Power BI</span><span class="skill-tag">Tableau</span><span class="skill-tag">AWS S3</span><span class="skill-tag">AWS Glue</span><span class="skill-tag">Athena</span><span class="skill-tag">Snowflake</span><span class="skill-tag">Parquet</span><span class="skill-tag">Git</span><span class="skill-tag">Jupyter</span><span class="skill-tag">VS Code</span><span class="skill-tag">Excel</span>
+        </div>
+      </div>
+      <div class="skill-group fade-up delay-2">
+        <div class="skill-group-title">Methods</div>
+        <div class="skill-tags">
+          <span class="skill-tag">A/B Testing (Z-test)</span><span class="skill-tag">Bayesian Analysis</span><span class="skill-tag">SARIMA</span><span class="skill-tag">Prophet</span><span class="skill-tag">Medallion Architecture</span><span class="skill-tag">SCD Type 2</span><span class="skill-tag">Star Schema</span><span class="skill-tag">ETL</span><span class="skill-tag">Data Quality Profiling</span><span class="skill-tag">Root Cause Analysis</span><span class="skill-tag">KPI Reporting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" style="padding-top:0;">
+  <div class="section-inner" style="padding-top:20px;">
+    <div class="section-tag">Proficiency</div>
+    <h2 class="section-title fade-up">Technical Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-group fade-up delay-1">
+        <div class="skill-group-title">Languages &amp; Query</div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">SQL / PostgreSQL</span><span class="skill-pct">95%</span></div><div class="skill-bar"><div class="skill-fill" data-width="95"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Python (Pandas, NumPy, SciPy, Prophet)</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">DAX</span><span class="skill-pct">83%</span></div><div class="skill-bar"><div class="skill-fill" data-width="83"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">SQL Server</span><span class="skill-pct">78%</span></div><div class="skill-bar"><div class="skill-fill" data-width="78"></div></div></div>
+      </div>
+      <div class="skill-group fade-up delay-2">
+        <div class="skill-group-title">BI &amp; Visualization</div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Microsoft Power BI</span><span class="skill-pct">90%</span></div><div class="skill-bar"><div class="skill-fill green" data-width="90"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Excel (Power Query, Macros, Pivot)</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill green" data-width="85"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Matplotlib / Seaborn</span><span class="skill-pct">82%</span></div><div class="skill-bar"><div class="skill-fill green" data-width="82"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Tableau</span><span class="skill-pct">72%</span></div><div class="skill-bar"><div class="skill-fill green" data-width="72"></div></div></div>
+      </div>
+      <div class="skill-group fade-up delay-3">
+        <div class="skill-group-title">Cloud &amp; Platforms</div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">AWS (S3, Glue, Athena)</span><span class="skill-pct">80%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="80"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Snowflake (Time Travel, Zero-Copy Clone)</span><span class="skill-pct">78%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="78"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Parquet / File Optimization</span><span class="skill-pct">82%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="82"></div></div></div>
+      </div>
+      <div class="skill-group fade-up delay-4">
+        <div class="skill-group-title">Data Engineering</div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Data Quality &amp; Profiling</span><span class="skill-pct">90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">Star Schema / SCD Type 2</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">ETL / Medallion Architecture</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+        <div class="skill-item"><div class="skill-row"><span class="skill-name">SARIMA / Prophet Forecasting</span><span class="skill-pct">82%</span></div><div class="skill-bar"><div class="skill-fill" data-width="82"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-tag">Portfolio</div>
+    <h2 class="section-title fade-up">Production-Grade Projects</h2>
+    <p class="section-sub fade-up delay-1">Seven end-to-end analytical projects — each with a business requirements document, data dictionary, and scope document. Not just notebooks.</p>
+    <div class="projects-grid">
+      <div class="project-card fade-up delay-1">
+        <div class="project-top"><span class="project-num">PRJ 01</span><span class="project-impact impact-green">CAD $402K Prevented</span></div>
+        <div class="project-title">A/B Testing Analysis</div>
+        <div class="project-client">Client: NorthCart Digital</div>
+        <div class="project-desc">Full statistical test suite on 290,584 transactions — delivered a hard NO-GO recommendation on a website redesign backed by evidence, not instinct. Profiled data quality across 7 analytical methods.</div>
+        <div class="project-stat">Z-test p=0.19 &nbsp;&middot;&nbsp; Bayesian P(B&gt;A)=9.51% &nbsp;&middot;&nbsp; Cohen&#39;s h=0.0049</div>
+        <div class="project-tech"><span class="tech-badge">Python</span><span class="tech-badge">SQL</span><span class="tech-badge">Power BI</span><span class="tech-badge">Z-test</span><span class="tech-badge">Bayesian</span></div>
+      </div>
+      <div class="project-card fade-up delay-2">
+        <div class="project-top"><span class="project-num">PRJ 02</span><span class="project-impact impact-blue">1.44% MAPE</span></div>
+        <div class="project-title">Alberta Retail Sales Forecasting</div>
+        <div class="project-client">Data: Statistics Canada (8-yr dataset)</div>
+        <div class="project-desc">Tuned Prophet outperformed SARIMA on an 8-year Alberta retail dataset. Projected May 2026 as Alberta&#39;s first $10B+ retail month in history. 2026 annual forecast ~$111B (+2.59% YoY).</div>
+        <div class="project-stat">Prophet 1.44% MAPE vs SARIMA 1.49% &nbsp;&middot;&nbsp; 2026 forecast ~$111B</div>
+        <div class="project-tech"><span class="tech-badge">Python</span><span class="tech-badge">SARIMA</span><span class="tech-badge">Prophet</span><span class="tech-badge">Power BI</span><span class="tech-badge">DAX UNION</span></div>
+      </div>
+      <div class="project-card fade-up delay-1">
+        <div class="project-top"><span class="project-num">PRJ 03</span><span class="project-impact impact-purple">CAD $485K Risk Surfaced</span></div>
+        <div class="project-title">Snowflake Data Warehouse Migration</div>
+        <div class="project-client">Client: MapleCart Commerce</div>
+        <div class="project-desc">PostgreSQL star schema migrated to Snowflake — 112,992 fact rows. Time Travel data recovery, Zero-Copy Clone, and Snowflake-native SQL (QUALIFY, RATIO_TO_REPORT, IFF). SCD Type 2 for full historical auditability.</div>
+        <div class="project-stat">37 DQ rules &nbsp;&middot;&nbsp; 112,992 fact rows &nbsp;&middot;&nbsp; SCD Type 2 &nbsp;&middot;&nbsp; Time Travel</div>
+        <div class="project-tech"><span class="tech-badge">Snowflake</span><span class="tech-badge">PostgreSQL</span><span class="tech-badge">Python</span><span class="tech-badge">Power BI</span><span class="tech-badge">SCD Type 2</span></div>
+      </div>
+      <div class="project-card fade-up delay-2">
+        <div class="project-top"><span class="project-num">PRJ 04</span><span class="project-impact impact-blue">98.8% Size Reduction</span></div>
+        <div class="project-title">Cloud Analytics Pipeline</div>
+        <div class="project-client">Data: Statistics Canada Labour Data</div>
+        <div class="project-desc">Serverless AWS pipeline ingesting 3.97M rows — Python/Parquet to S3, AWS Glue Crawler, Amazon Athena. Reconciled against published Stats Canada figures. Alberta confirmed as Canada&#39;s strongest labour market (64.4% employment rate).</div>
+        <div class="project-stat">3.97M rows &nbsp;&middot;&nbsp; 98.8% file size reduction via Parquet compression</div>
+        <div class="project-tech"><span class="tech-badge">AWS S3</span><span class="tech-badge">Glue</span><span class="tech-badge">Athena</span><span class="tech-badge">Python</span><span class="tech-badge">Parquet</span></div>
+      </div>
+      <div class="project-card fade-up delay-1">
+        <div class="project-top"><span class="project-num">PRJ 05</span><span class="project-impact impact-green">Medallion Architecture</span></div>
+        <div class="project-title">MapleCart Data Warehouse</div>
+        <div class="project-client">PostgreSQL &mdash; Bronze / Silver / Gold</div>
+        <div class="project-desc">Full medallion architecture in PostgreSQL — Bronze/Silver/Gold layers, 37 DQ rules, SCD Type 2, star schema, 10 analytical SQL queries, and a 4-page live Power BI dashboard with direct connection.</div>
+        <div class="project-stat">37 DQ rules &nbsp;&middot;&nbsp; SCD Type 2 &nbsp;&middot;&nbsp; Star schema &nbsp;&middot;&nbsp; Live Power BI</div>
+        <div class="project-tech"><span class="tech-badge">PostgreSQL</span><span class="tech-badge">ETL</span><span class="tech-badge">Star Schema</span><span class="tech-badge">Power BI</span><span class="tech-badge">DAX</span></div>
+      </div>
+      <div class="project-card fade-up delay-2">
+        <div class="project-top"><span class="project-num">PRJ 06</span><span class="project-impact impact-red">Supply-Demand Gap</span></div>
+        <div class="project-title">Global Tech Skills Supply-Demand</div>
+        <div class="project-client">Data: Adzuna &amp; Stack Overflow</div>
+        <div class="project-desc">17,350 job postings + 49,191 Stack Overflow rows across five notebooks. Built a star schema Power BI dashboard. R and Oracle identified as top unmet demand gaps in the market.</div>
+        <div class="project-stat">17,350 job postings &nbsp;&middot;&nbsp; 49,191 Stack Overflow rows &nbsp;&middot;&nbsp; 5 notebooks</div>
+        <div class="project-tech"><span class="tech-badge">Python</span><span class="tech-badge">SQL</span><span class="tech-badge">Power BI</span><span class="tech-badge">Star Schema</span></div>
+      </div>
+      <div class="project-card fade-up delay-1" style="grid-column:span 2;">
+        <div class="project-top"><span class="project-num">PRJ 07</span><span class="project-impact impact-green">Clinical Analytics</span></div>
+        <div class="project-title">IVF Sperm Selection — Healthcare Analytics Pipeline</div>
+        <div class="project-client">Client: AiSPRY / 360DigiTMG &mdash; Delivered to Clinical Audience</div>
+        <div class="project-desc">End-to-end clinical analytics pipeline: Python ingestion and cleaning, PostgreSQL, 4-page Power BI dashboard. 1,215 records across 26 variables. Identified EMB_B as top embryologist at 68.3% vs 59.75% baseline — direct staffing recommendation. Detected June 2025 as statistically significant underperformance month (47.7%). Quantified avg selection time at 152.58s with measurable technician-level variance. Delivered via structured viva presentation to clinical leadership.</div>
+        <div class="project-stat">1,215 records &nbsp;&middot;&nbsp; 26 variables &nbsp;&middot;&nbsp; CRISP-ML(Q) charter &nbsp;&middot;&nbsp; BRD &nbsp;&middot;&nbsp; Data dictionary</div>
+        <div class="project-tech"><span class="tech-badge">Python</span><span class="tech-badge">PostgreSQL</span><span class="tech-badge">Power BI</span><span class="tech-badge">CRISP-ML(Q)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience" style="background:linear-gradient(180deg,transparent,rgba(13,20,40,.4),transparent);">
+  <div class="section-inner">
+    <div class="section-tag">Experience</div>
+    <h2 class="section-title fade-up">Work History</h2>
+    <div class="timeline">
+      <div class="timeline-item fade-up delay-1">
+        <div class="timeline-header">
+          <span class="timeline-role">Data Analyst Intern</span>
+          <span class="timeline-date">Jan 2026 &ndash; Feb 2026</span>
+        </div>
+        <div class="timeline-company">AiSPRY (Capstone via 360DigiTMG Data Analytics Program) &middot; Remote</div>
+        <ul class="timeline-bullets">
+          <li>Built Python-based clinical data ingestion and validation pipeline processing 1,215 healthcare records across 26 variables &mdash; zero reconciliation discrepancies, audit-ready outputs.</li>
+          <li>Developed 4-page Power BI KPI dashboard and full stakeholder reporting package (BRD, data dictionary, project charter), standardizing clinical operations reporting for developer and leadership review.</li>
+          <li>Identified statistically significant technician-level performance variance (47.7% vs. 59.75% baseline, p &lt; 0.05) via root cause analysis &mdash; isolating signal from noise and presenting to clinical leadership.</li>
+          <li>Joined multi-source clinical records in PostgreSQL to surface a staffing insight (top clinician at 68.3% vs. 59.75% group baseline) as a direct operational recommendation.</li>
+        </ul>
+      </div>
+      <div class="timeline-item fade-up delay-2">
+        <div class="timeline-header">
+          <span class="timeline-role">Inventory &amp; Data Clerk (Data Analysis &amp; Reporting)</span>
+          <span class="timeline-date">2022 &ndash; Present</span>
+        </div>
+        <div class="timeline-company">FGL Sports Limited (Sport Chek) &middot; Calgary, AB</div>
+        <ul class="timeline-bullets">
+          <li>Own daily data quality and reporting lifecycle across 500+ inventory records &mdash; profiling stock and logistics data for completeness, accuracy, and consistency, maintaining a near-zero error rate.</li>
+          <li>Perform structured root cause analysis on data exceptions, distinguishing systemic entry errors from isolated anomalies, communicating findings through documented escalation reports to store leadership.</li>
+          <li>Build ad-hoc and recurring Excel reporting views (Power Query, Pivot Tables, array formulas) consolidating records from multiple internal systems into operational dashboards used in business planning sessions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="section-inner">
+    <div class="section-tag">Education &amp; Certifications</div>
+    <h2 class="section-title fade-up">Academic Background</h2>
+    <div class="edu-grid">
+      <div class="edu-card fade-up delay-1">
+        <div class="edu-icon">&#127885;</div>
+        <div class="edu-degree">IBM Data Analytics Professional Certificate</div>
+        <div class="edu-inst">IBM / Coursera</div>
+        <div class="edu-year">2025</div>
+      </div>
+      <div class="edu-card fade-up delay-2">
+        <div class="edu-icon">&#127891;</div>
+        <div class="edu-degree">M.Sc. Information Technology</div>
+        <div class="edu-inst">Sardar Patel University, India</div>
+        <div class="edu-year">2015</div>
+      </div>
+      <div class="edu-card fade-up delay-3">
+        <div class="edu-icon">&#128187;</div>
+        <div class="edu-degree">Web Design &amp; Development, IT</div>
+        <div class="edu-inst">Conestoga College</div>
+        <div class="edu-year">2019</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-tag" style="justify-content:center;">Let&#39;s Connect</div>
+    <h2 class="section-title fade-up" style="text-align:center;">Open to Data Analyst<br/>&amp; BI Analyst Roles</h2>
+    <p style="color:var(--text2);font-size:.9rem;line-height:1.7;text-align:center;" class="fade-up delay-1">Available for remote roles across Canada and the US, and on-site/hybrid in Calgary. Responds the same day.</p>
+    <div class="contact-links fade-up delay-2">
+      <a href="https://github.com/prashant-rathod-dataanalytics" target="_blank" rel="noopener" class="contact-btn github">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.41-1.29.75-1.59-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.004 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://linkedin.com/in/prashant-rathod-data-analyst" target="_blank" rel="noopener" class="contact-btn linkedin">
+        <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 110-4.14 2.07 2.07 0 010 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.27V1.73C24 .77 23.21 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+      <a href="mailto:psrathod3886@gmail.com" class="contact-btn email">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer><span>&#169; 2026 Prashant Rathod &nbsp;&middot;&nbsp; Built for results, not just looks</span></footer>
+
+<script>
+const canvas=document.getElementById("canvas-bg"),ctx=canvas.getContext("2d");
+let W,H,particles=[],mouse={x:-9999,y:-9999};
+const COLORS=["#4f6ef7","#8b5cf6","#06d6a0","#f72585"];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener("resize",()=>{resize();init();});
+class Particle{constructor(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.45;this.vy=(Math.random()-.5)*.45;this.r=Math.random()*2+.8;this.color=COLORS[Math.floor(Math.random()*COLORS.length)];this.alpha=Math.random()*.5+.2;}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.color;ctx.globalAlpha=this.alpha;ctx.fill();}}
+function init(){particles=[];const n=Math.floor(W*H/14000);for(let i=0;i<n;i++)particles.push(new Particle());}
+init();
+function drawLines(){const lim=120;for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<lim){ctx.globalAlpha=(1-d/lim)*.18;ctx.strokeStyle="#4f6ef7";ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();}}const mdx=particles[i].x-mouse.x,mdy=particles[i].y-mouse.y,md=Math.sqrt(mdx*mdx+mdy*mdy);if(md<160){ctx.globalAlpha=(1-md/160)*.35;ctx.strokeStyle="#8b5cf6";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}}}
+function animate(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{p.update();p.draw();});drawLines();ctx.globalAlpha=1;requestAnimationFrame(animate);}
+animate();
+window.addEventListener("mousemove",e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+window.addEventListener("mouseleave",()=>{mouse.x=-9999;mouse.y=-9999;});
+const prog=document.getElementById("scroll-progress");
+window.addEventListener("scroll",()=>{const t=document.documentElement.scrollHeight-window.innerHeight;prog.style.width=(window.scrollY/t*100)+"%";});
+const roles=["Data Analyst","BI Analyst","SQL & Python","Cloud Analytics","Power BI"];
+let ri=0,ci=0,deleting=false,pauseTimer=0;
+const el=document.getElementById("typing-role");
+function type(){if(pauseTimer>0){pauseTimer--;setTimeout(type,80);return;}if(!deleting&&ci<=roles[ri].length){el.textContent=roles[ri].slice(0,ci);ci++;if(ci>roles[ri].length){deleting=true;pauseTimer=30;}setTimeout(type,90);}else if(deleting&&ci>=0){el.textContent=roles[ri].slice(0,ci);ci--;if(ci<0){deleting=false;ri=(ri+1)%roles.length;ci=0;pauseTimer=8;}setTimeout(type,55);}}
+type();
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+document.querySelectorAll(".fade-up").forEach(el=>observer.observe(el));
+const barObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.querySelectorAll(".skill-fill").forEach(b=>{b.style.width=b.dataset.width+"%";});});},{threshold:.2});
+document.querySelectorAll(".skill-group").forEach(g=>barObs.observe(g));
+const ham=document.getElementById("hamburger"),mm=document.getElementById("mobile-menu");
+ham.addEventListener("click",()=>mm.classList.toggle("open"));
+function closeMobile(){mm.classList.remove("open");}
+</script>
+</body>
+</html>
